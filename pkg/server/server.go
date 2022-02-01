@@ -8,11 +8,13 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
+	"github.com/schedule-api/pkg/user"
 )
 
 type Server struct {
 	db     *sqlx.DB
 	Router *mux.Router
+	user   *user.Service
 }
 
 func NewServer() (*Server, error) {
@@ -25,6 +27,7 @@ func NewServer() (*Server, error) {
 	server := &Server{
 		db:     db,
 		Router: mux.NewRouter(),
+		user:   user.NewService(db),
 	}
 	server.routes()
 	return server, nil
