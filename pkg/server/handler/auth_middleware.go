@@ -1,4 +1,4 @@
-package server
+package handler
 
 import (
 	"context"
@@ -16,7 +16,7 @@ type User struct {
 	UserID int
 }
 
-func (s *Server) authMiddleware(h http.Handler) http.Handler {
+func HandleAuthentication(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := extractToken(r)
 		if token == "" {

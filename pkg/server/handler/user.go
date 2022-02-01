@@ -1,4 +1,4 @@
-package server
+package handler
 
 import (
 	"context"
@@ -14,7 +14,7 @@ type UserSaver interface {
 	Save(ctx context.Context, data user.User) (int, error)
 }
 
-func handleUserSave(userSaver UserSaver) http.HandlerFunc {
+func HandleUserSave(userSaver UserSaver) http.HandlerFunc {
 	type request struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
@@ -61,7 +61,7 @@ type UserGetter interface {
 	GetById(ctx context.Context, id int) (user.User, error)
 }
 
-func handleUserGetById(userGetter UserGetter) http.HandlerFunc {
+func HandleUserGetById(userGetter UserGetter) http.HandlerFunc {
 	type response struct {
 		Id       int    `json:"id"`
 		Email    string `json:"email"`
@@ -101,7 +101,7 @@ type UserLoginer interface {
 	Login(ctx context.Context, loginUser user.LoginUser) (user.LoginResponse, error)
 }
 
-func handleUserLogin(userLoginer UserLoginer) http.HandlerFunc {
+func HandleUserLogin(userLoginer UserLoginer) http.HandlerFunc {
 	type request struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
