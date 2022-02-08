@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -8,11 +9,13 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
+	"github.com/schedule-api/pkg/user"
 )
 
 type Server struct {
 	db     *sqlx.DB
 	Router *mux.Router
+	user   *user.Service
 }
 
 func NewServer() (*Server, error) {
@@ -25,6 +28,7 @@ func NewServer() (*Server, error) {
 	server := &Server{
 		db:     db,
 		Router: mux.NewRouter(),
+		user:   user.NewService(db),
 	}
 	server.routes()
 	return server, nil
@@ -47,10 +51,14 @@ func handleHealthCheck(server Server) http.HandlerFunc {
 
 		err := server.db.Ping()
 		if err != nil {
-			makeResponse(res, http.StatusInternalServerError, response{Message: "Database connection Error: " + err.Error()})
+			res.Header().Add("Content-Type", "application/json")
+			res.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(res).Encode(response{Message: "Database connection Error: " + err.Error()})
 			return
 		}
 
-		makeResponse(res, http.StatusOK, response{Message: "ok"})
+		res.Header().Add("Content-Type", "application/json")
+		res.WriteHeader(http.StatusOK)
+		json.NewEncoder(res).Encode(response{Message: "ok"})
 	}
 }
